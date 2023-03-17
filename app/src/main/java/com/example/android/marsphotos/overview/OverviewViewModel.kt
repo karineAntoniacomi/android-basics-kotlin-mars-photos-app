@@ -23,9 +23,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.android.marsphotos.network.MarsApi
 import kotlinx.coroutines.launch
 
-/**
- * The [ViewModel] that is attached to the [OverviewFragment].
- */
+/** The [ ViewModel ] that is attached to the [ OverviewFragment ]. */
 class OverviewViewModel : ViewModel() {
 
     // The internal MutableLiveData that stores the status of the most recent request
@@ -33,30 +31,27 @@ class OverviewViewModel : ViewModel() {
 
     // The external immutable LiveData for the request status
     val status: LiveData<String> = _status
-    /**
-     * Call getMarsPhotos() on init so we can display status immediately.
-     */
+
+    // Call getMarsPhotos() on init so we can display status immediately.
     init {
         getMarsPhotos()
     }
 
-    /**
-     * Gets Mars photos information from the Mars API Retrofit service and updates the
-     * [MarsPhoto] [List] [LiveData].
-     */
+    /** Gets Mars photos information from the Mars API Retrofit service
+     *  and updates the[ MarsPhoto ] [ List ] [ LiveData ]. */
     private fun getMarsPhotos() {
-        //_status.value = "Set the Mars API status response here!"
-        //  Inicia a corrotina
+        // _status.value = "Set the Mars API status response here!"
+        // Inicia a corrotina
         viewModelScope.launch {
             // Bloco try verifica se pode ocorrer excessão
             try {
-                /* Usa objeto Singleton MarsApi para chamar o método
-                getPhotos() da interface retrofitService */
+                // Usa objeto Singleton MarsApi para chamar o método
+                // getPhotos() da interface retrofitService
                 val listResult = MarsApi.retrofitService.getPhotos()
                 // Salva o resultado recebido do servidor back-end
-                _status.value = listResult
-             //  Bloco catch trata a excessão ocorrida, evitando
-            //  que o app seja encerrado de forma inesperada
+                _status.value = "Success: ${listResult.size} Mars photos retrieved"
+            // Bloco catch trata a excessão ocorrida, evitando
+            // que o app seja encerrado de forma inesperada */
             } catch (e: Exception) {
                 _status.value = "Failure: ${e.message}"
             }
