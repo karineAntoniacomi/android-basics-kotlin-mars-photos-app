@@ -21,6 +21,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.android.marsphotos.network.MarsApi
+import com.example.android.marsphotos.network.MarsPhoto
 import kotlinx.coroutines.launch
 
 /** The [ ViewModel ] that is attached to the [ OverviewFragment ]. */
@@ -31,6 +32,10 @@ class OverviewViewModel : ViewModel() {
 
     // The external immutable LiveData for the request status
     val status: LiveData<String> = _status
+
+    // Propriedade mutável do tipo MutableLiveData que armazena um único objeto MarsPhoto
+    private val _photos = MutableLiveData<MarsPhoto>()
+    val photos: LiveData<MarsPhoto> = _photos
 
     // Call getMarsPhotos() on init so we can display status immediately.
     init {
@@ -45,11 +50,15 @@ class OverviewViewModel : ViewModel() {
         viewModelScope.launch {
             // Bloco try verifica se pode ocorrer excessão
             try {
-                // Usa objeto Singleton MarsApi para chamar o método
-                // getPhotos() da interface retrofitService
-                val listResult = MarsApi.retrofitService.getPhotos()
+                // val listResult = MarsApi.retrofitService.getPhotos()
+                // _status.value = "Success: ${listResult.size} Mars photos retrieved"
+
+                // Ojeto Singleton MarsApi chama método getPhotos() da interface retrofitService
                 // Salva o resultado recebido do servidor back-end
-                _status.value = "Success: ${listResult.size} Mars photos retrieved"
+                _photos.value = MarsApi.retrofitService.getPhotos()[0]
+
+                // Exibe o primeiro URL da imagem na lista de fotos
+                _status.value = " First Mars image URL : ${_photos.value!!.imgSrcUrl}"
             // Bloco catch trata a excessão ocorrida, evitando
             // que o app seja encerrado de forma inesperada */
             } catch (e: Exception) {

@@ -42,7 +42,4 @@ object MarsApi {
    // lazy: garante que o objeto seja inicializado no primeiro uso do objeto
     val retrofitService : MarsApiService by lazy {
         retrofit.create(MarsApiService::class.java) }
-    /** Toda vez que o app chamar MarsApi.retrofitService, o autor
-    da chamada acessará o mesmo objeto Singleton da Retrofit que
-    implementa o MarsApiService, criado no primeiro acesso. */
 }
