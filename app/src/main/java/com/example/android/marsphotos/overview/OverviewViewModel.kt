@@ -19,6 +19,9 @@ package com.example.android.marsphotos.overview
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.android.marsphotos.network.MarsApi
+import kotlinx.coroutines.launch
 
 /**
  * The [ViewModel] that is attached to the [OverviewFragment].
@@ -42,6 +45,21 @@ class OverviewViewModel : ViewModel() {
      * [MarsPhoto] [List] [LiveData].
      */
     private fun getMarsPhotos() {
-        _status.value = "Set the Mars API status response here!"
+        //_status.value = "Set the Mars API status response here!"
+        //  Inicia a corrotina
+        viewModelScope.launch {
+            // Bloco try verifica se pode ocorrer excessão
+            try {
+                /* Usa objeto Singleton MarsApi para chamar o método
+                getPhotos() da interface retrofitService */
+                val listResult = MarsApi.retrofitService.getPhotos()
+                // Salva o resultado recebido do servidor back-end
+                _status.value = listResult
+             //  Bloco catch trata a excessão ocorrida, evitando
+            //  que o app seja encerrado de forma inesperada
+            } catch (e: Exception) {
+                _status.value = "Failure: ${e.message}"
+            }
+        }
     }
 }

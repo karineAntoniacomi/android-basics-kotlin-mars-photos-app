@@ -19,8 +19,20 @@ private val retrofit = Retrofit.Builder()
 
 // Define como a Retrofit se comunica com o servidor da Web usando solicitações HTTP
 interface MarsApiService {
-
-    // Quando este método é invicado, a Retrofit anexa o endpoint photos ao URL base
+    // Quando este método é invocado, a Retrofit anexa o endpoint photos ao URL base
     @GET("photos")
-    fun getPhotos(): String
+    // suspend: Permite chamar o método em corrotinas
+    suspend fun getPhotos(): String
+}
+
+// Inicializa serviço da Retrofit. Objeto Singleton público
+// que pode ser acessado pelo restante do app.
+object MarsApi {
+   // propriedade de inicialização lenta (garante que o objeto
+   // seja inicializado no primeiro uso) de objeto da Retrofit
+    val retrofitService : MarsApiService by lazy {
+        retrofit.create(MarsApiService::class.java) }
+    /* Toda vez que o app chamar MarsApi.retrofitService, o autor
+    da chamada acessará o mesmo objeto Singleton da Retrofit que
+    implementa o MarsApiService, criado no primeiro acesso. */
 }
