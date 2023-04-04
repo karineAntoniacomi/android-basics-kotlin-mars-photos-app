@@ -24,14 +24,16 @@ import com.example.android.marsphotos.network.MarsApi
 import com.example.android.marsphotos.network.MarsPhoto
 import kotlinx.coroutines.launch
 
+enum class MarsApiStatus { LOADING, ERROR, DONE }
+
 /** The [ ViewModel ] that is attached to the [ OverviewFragment ]. */
 class OverviewViewModel : ViewModel() {
 
     // The internal MutableLiveData that stores the status of the most recent request
-    private val _status = MutableLiveData<String>()
-
+    private val _status = MutableLiveData<MarsApiStatus>()
+    // MarsApiStatus é a classe de enumeração
     // The external immutable LiveData for the request status
-    val status: LiveData<String> = _status
+    val status: LiveData<MarsApiStatus> = _status
 
     // Propriedade mutável do tipo MutableLiveData que armazena um único objeto MarsPhoto
     // private val _photos = MutableLiveData<MarsPhoto>()
@@ -53,25 +55,19 @@ class OverviewViewModel : ViewModel() {
         // _status.value = "Set the Mars API status response here!"
         // Inicia a corrotina
         viewModelScope.launch {
+            // status inicial enquanto a corrotina executa
+            _status.value = MarsApiStatus.LOADING
             // Bloco try verifica se pode ocorrer excessão
             try {
-                // val listResult = MarsApi.retrofitService.getPhotos()
-                // _status.value = "Success: ${listResult.size} Mars photos retrieved"
-
-                // Ojeto Singleton MarsApi chama método getPhotos() da interface retrofitService
-                // Salva o resultado recebido do servidor back-end
-                // _photos.value = MarsApi.retrofitService.getPhotos()[0]
-
-                // Exibe o primeiro URL da imagem na lista de fotos
-                // _status.value = " First Mars image URL : ${_photos.value!!.imgSrcUrl}"
-
                 _photos.value = MarsApi.retrofitService.getPhotos()
-                _status.value = "Success: Mars properties retrieved22"
+                _status.value = MarsApiStatus.DONE
 
             // Bloco catch trata a excessão ocorrida, evitando
             // que o app seja encerrado de forma inesperada */
             } catch (e: Exception) {
-                _status.value = "Failure: ${e.message}"
+                _status.value = MarsApiStatus.ERROR
+                // define _photos como lista vazia, apagando a recyclerView
+                _photos.value = listOf()
             }
         }
     }
